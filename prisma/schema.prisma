@@ -12,3 +12,93 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Student {
+  id                    String     @id @default(uuid())
+  email                 String     @unique
+  currentHostelId       String     @map("current_hostel_id")
+  nextHostelId          String     @map("next_hostel_id")
+  supervisedWarehouse   Warehouse? @relation("warehouseSupervisors", fields: [supervisedWarehouseId], references: [id])
+  supervisedWarehouseId String?    @map("supervised_warehouse_id")
+
+  // Relations
+  currentHostel Hostel       @relation("currentResidents", fields: [currentHostelId], references: [id])
+  nextHostel    Hostel       @relation("futureResidents", fields: [nextHostelId], references: [id])
+  belongings    Belongings[] @relation("studentBelongings")
+  sessions      Session[]    @relation("studentSessions")
+  foundIncident Incident?    @relation("foundByStudent")
+  lostIncident  Incident?    @relation("belongsToStudent")
+}
+
+model Hostel {
+  id   String @id @default(uuid())
+  name String
+
+  // Relations
+  currentResidents Student[] @relation("currentResidents")
+  futureResidents  Student[] @relation("futureResidents")
+}
+
+model Belongings {
+  id          String  @id @default(uuid())
+  isCheckedIn Boolean @map("is_checked_in")
+  studentId   String  @map("student_id")
+  warehouseId String  @map("warehouse_id")
+
+  // Relations
+  luggage   Luggage?  @relation("luggageBelonging")
+  mattress  Mattress? @relation("mattressBelonging")
+  student   Student   @relation("studentBelongings", fields: [studentId], references: [id])
+  warehouse Warehouse @relation("warehouseBelongings", fields: [warehouseId], references: [id])
+}
+
+model Luggage {
+  id        String     @id @default(uuid())
+  belonging Belongings @relation("luggageBelonging", fields: [id], references: [id])
+}
+
+model Mattress {
+  id        String     @id @default(uuid())
+  belonging Belongings @relation("mattressBelonging", fields: [id], references: [id])
+  incident  Incident?  @relation("involvedMattress")
+}
+
+model Warehouse {
+  id          String       @id @default(uuid())
+  belongings  Belongings[] @relation("warehouseBelongings")
+  supervisors Student[]    @relation("warehouseSupervisors")
+}
+
+model Staff {
+  id       String    @id @default(uuid())
+  name     String
+  sessions Session[] @relation("staffSessions")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  openTime  DateTime @map("open_time")
+  closeTime DateTime @map("close_time")
+  resolved  Boolean
+  staffId   String   @map("staff_id")
+  studentId String   @map("student_id")
+
+  // Relations
+  staff   Staff   @relation("staffSessions", fields: [staffId], references: [id])
+  student Student @relation("studentSessions", fields: [studentId], references: [id])
+}
+
+model Incident {
+  id                 String  @default(uuid())
+  foundByStudentId   String  @unique @map("found_by_student_id")
+  belongsToStudentId String  @unique @map("belongs_to_student_id")
+  mattressId         String  @unique @map("mattress_id")
+  resolved           Boolean
+
+  // Relations
+  mattress         Mattress @relation("involvedMattress", fields: [mattressId], references: [id])
+  foundByStudent   Student  @relation("foundByStudent", fields: [foundByStudentId], references: [id])
+  belongsToStudent Student  @relation("belongsToStudent", fields: [belongsToStudentId], references: [id])
+
+  @@id([id, foundByStudentId, belongsToStudentId, mattressId])
+}
