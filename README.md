@@ -18,7 +18,7 @@ cd cache-n-carry
 ## Initializing the Database in Docker
 1. Run `docker-compose up -d`
 2. [Optional] To verify the database schema via the MySQL shell:
-   ```
+   ```bash
    docker exec -it cache-n-carry-mysql-dev mysql -u dev_user -p
    ```
-   Enter the password specified in `docker/docker-compose.yml` when prompted.
+3. Enter the password specified in `docker/docker-compose.yml` when prompted.
