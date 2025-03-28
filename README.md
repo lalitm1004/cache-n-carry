@@ -16,9 +16,10 @@ cd cache-n-carry
 6. Run `npm run dev` to get frontend running
 
 ## Initializing the Database in Docker
-1. Run `docker-compose up -d`
-2. [Optional] To verify the database schema via the MySQL shell:
-   ```bash
-   docker exec -it cache-n-carry-mysql-dev mysql -u dev_user -p
-   ```
-3. Enter the password specified in `docker/docker-compose.yml` when prompted.
+1. Navigate into `/docker`
+2. Run `docker-compose up -d`
+3. [Optional] To verify the database schema via the MySQL shell:
+```bash
+docker exec -it cache-n-carry-mysql-dev mysql -u dev_user -p
+ ```
+4. Enter the password specified in `docker/docker-compose.yml` when prompted.
