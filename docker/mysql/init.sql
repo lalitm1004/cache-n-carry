@@ -4,7 +4,9 @@ CREATE TABLE user (
     name VARCHAR(191) NOT NULL,
     email VARCHAR(191) NOT NULL, 
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    UNIQUE (email)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "hostel"
@@ -27,7 +29,11 @@ CREATE TABLE warehouse (
 CREATE TABLE staff (
     id VARCHAR(191) NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT user_id_staff FOREIGN KEY (id) REFERENCES user(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "student"
@@ -36,7 +42,19 @@ CREATE TABLE student (
     current_hostel_id VARCHAR(191) NOT NULL,
     next_hostel_id VARCHAR(191),
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT user_id_student FOREIGN KEY (id) REFERENCES user(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT current_hostel FOREIGN KEY (current_hostel_id) REFERENCES hostel(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT next_hostel FOREIGN KEY (next_hostel_id) REFERENCES hostel(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "belonging"
@@ -46,21 +64,35 @@ CREATE TABLE belonging (
     student_id VARCHAR(191) NOT NULL,
     warehouse_id VARCHAR(191),
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT owner_student FOREIGN KEY (student_id) REFERENCES student(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT warehouse_storage FOREIGN KEY (warehouse_id) REFERENCES warehouse(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "mattress"
 CREATE TABLE mattress (
     id VARCHAR(191) NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT mattress_belonging FOREIGN KEY (id) REFERENCES belonging(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "luggage"
 CREATE TABLE luggage (
     id VARCHAR(191) NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT luggage_belonging FOREIGN KEY (id) REFERENCES belonging(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- create table "session"
@@ -72,9 +104,20 @@ CREATE TABLE session (
     staff_id VARCHAR(191) NOT NULL,
     student_id VARCHAR(191) NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT student_session FOREIGN KEY (student_id) REFERENCES student(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT staff_session FOREIGN KEY (staff_id) REFERENCES staff(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    UNIQUE (staff_id, student_id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- create table "incident"
 CREATE TABLE incident (
     id VARCHAR(191) NOT NULL,
     found_by_id VARCHAR(191) NOT NULL,
@@ -82,84 +125,21 @@ CREATE TABLE incident (
     mattress_id VARCHAR(191) NOT NULL,
     resolved BOOLEAN NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT student_found_by FOREIGN KEY (found_by_id) REFERENCES student(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT student_belongs_to FOREIGN KEY (belongs_to_id) REFERENCES student(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    CONSTRAINT mattress_involved FOREIGN KEY (mattress_id) REFERENCES mattress(id)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+
+    UNIQUE (found_by_id),
+    UNIQUE (belongs_to_id),
+    UNIQUE (mattress_id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- foreign keys for "staff"
-ALTER TABLE staff 
-    ADD CONSTRAINT user_id_staff FOREIGN KEY (id) REFERENCES user(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "student"
-ALTER TABLE student
-    ADD CONSTRAINT user_id_student FOREIGN KEY (id) REFERENCES user(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE student
-    ADD CONSTRAINT current_hostel FOREIGN KEY (current_hostel_id) REFERENCES hostel(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE student
-    ADD CONSTRAINT next_hostel FOREIGN KEY (next_hostel_id) REFERENCES hostel(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "belonging"
-ALTER TABLE belonging
-    ADD CONSTRAINT owner_student FOREIGN KEY (student_id) REFERENCES student(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE belonging
-    ADD CONSTRAINT warehouse_storage FOREIGN KEY (warehouse_id) REFERENCES warehouse(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "mattress"
-ALTER TABLE mattress
-    ADD CONSTRAINT mattress_belonging FOREIGN KEY (id) REFERENCES belonging(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "mattress"
-ALTER TABLE luggage
-    ADD CONSTRAINT luggage_belonging FOREIGN KEY (id) REFERENCES belonging(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "session"
-ALTER TABLE session
-    ADD CONSTRAINT student_session FOREIGN KEY (student_id) REFERENCES student(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE session
-    ADD CONSTRAINT staff_session FOREIGN KEY (staff_id) REFERENCES staff(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- foreign keys for "incident"
-ALTER TABLE incident
-    ADD CONSTRAINT student_found_by FOREIGN KEY (found_by_id) REFERENCES student(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE incident
-    ADD CONSTRAINT student_belongs_to FOREIGN KEY (belongs_to_id) REFERENCES student(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
-ALTER TABLE incident
-    ADD CONSTRAINT mattress_involved FOREIGN KEY (mattress_id) REFERENCES mattress(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE;
-
--- unique indices
-CREATE UNIQUE INDEX user_email ON user(email);
-CREATE UNIQUE INDEX session_staff_student ON session(staff_id, student_id);
-CREATE UNIQUE INDEX incident_found_by ON incident(found_by_id);
-CREATE UNIQUE INDEX incident_belongs_to ON incident(belongs_to_id);
-CREATE UNIQUE INDEX incident_mattress ON incident(mattress_id);
