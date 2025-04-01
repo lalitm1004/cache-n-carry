@@ -94,6 +94,7 @@ model Mattress {
   id        String    @id
   //
   belonging Belonging @relation(fields: [id], references: [id])
+  incident  Incident? @relation("mattressInvolved")
 
   @@map("mattress")
 }
@@ -114,15 +115,16 @@ model Session {
 }
 
 model Incident {
-  id               String  @default(uuid())
-  foundBy          String  @unique @map("found_by")
-  belongsTo        String  @unique @map("belongs_to")
-  mattressId       String  @unique @map("mattress_id")
-  resolved         Boolean @default(false)
+  id               String   @default(uuid())
+  foundBy          String   @unique @map("found_by")
+  belongsTo        String   @unique @map("belongs_to")
+  mattressId       String   @unique @map("mattress_id")
+  resolved         Boolean  @default(false)
   //
-  foundByStudent   Student @relation("foundByStudent", fields: [foundBy], references: [id])
-  belongsToStudent Student @relation("belongsToStudent", fields: [belongsTo], references: [id])
+  mattressInvolved Mattress @relation("mattressInvolved", fields: [mattressId], references: [id])
+  foundByStudent   Student  @relation("foundByStudent", fields: [foundBy], references: [id])
+  belongsToStudent Student  @relation("belongsToStudent", fields: [belongsTo], references: [id])
 
-  @@id([id, foundBy, belongsTo, mattressId])
+  @@id([id])
   @@map("incident")
 }

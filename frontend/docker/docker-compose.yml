@@ -4,13 +4,14 @@ services:
     container_name: cache-n-carry-mysql-dev
     restart: always
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: dev_db
       MYSQL_USER: dev_user
       MYSQL_PASSWORD: dev_password
     volumes:
+      - ./mysql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - mysql-data:/var/lib/mysql
 
 volumes:
