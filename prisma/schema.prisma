@@ -1,10 +1,139 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider  = "mysql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  //
+  studentUser Student?
+  staffUser   Staff?
+
+  @@map("user")
+}
+
+model Staff {
+  id      String    @id @default(uuid())
+  //
+  user    User      @relation(fields: [id], references: [id])
+  session Session[]
+
+  @@map("staff")
+}
+
+model Student {
+  id            String      @id @default(uuid())
+  rollNumber    String      @unique @db.VarChar(12)
+  currentRoomId String      @unique @map("current_room_id")
+  nextRoomId    String      @unique @map("next_room_id")
+  //
+  user          User        @relation(fields: [id], references: [id])
+  currentRoom   Room        @relation("currentResident", fields: [currentRoomId], references: [id])
+  nextRoom      Room        @relation("nextResident", fields: [nextRoomId], references: [id])
+  foundIncident Incident?   @relation("foundByStudent")
+  lostIncident  Incident?   @relation("belongsToStudent")
+  belongings    Belonging[]
+  session       Session[]
+
+  @@map("student")
+}
+
+model Hostel {
+  id    String @id @default(uuid())
+  name  String
+  //
+  rooms Room[]
+
+  @@map("hostel")
+}
+
+model Room {
+  id              String   @id @default(uuid())
+  number          String   @db.VarChar(6)
+  hostelId        String   @map("hostel_id")
+  //
+  currentResident Student? @relation("currentResident")
+  nextResident    Student? @relation("nextResident")
+  hostel          Hostel   @relation(fields: [hostelId], references: [id])
+
+  @@unique([hostelId, number])
+  @@map("room")
+}
+
+model Warehouse {
+  id               String      @id @default(uuid())
+  location         String
+  //
+  belongingsStored Belonging[]
+
+  @@map("warehouse")
+}
+
+model Belonging {
+  id          String    @id @default(uuid())
+  isCheckedIn Boolean   @default(false) @map("is_checked_in")
+  studentId   String    @map("student_id")
+  warehouseId String    @map("warehouse_id")
+  //
+  student     Student   @relation(fields: [studentId], references: [id])
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+  luggage     Luggage?
+  mattress    Mattress?
+
+  @@map("belonging")
+}
+
+model Luggage {
+  id        String    @id @default(uuid())
+  //
+  belonging Belonging @relation(fields: [id], references: [id])
+
+  @@map("luggage")
+}
+
+model Mattress {
+  id        String    @id @default(uuid())
+  //
+  belonging Belonging @relation(fields: [id], references: [id])
+  incident  Incident?
+
+  @@map("mattress")
+}
+
+model Session {
+  id         String    @id @default(uuid())
+  openTime   DateTime  @default(now()) @map("open_time")
+  closeTime  DateTime? @map("close_time")
+  terminated Boolean   @default(false)
+  staffId    String    @map("staff_id")
+  studentId  String    @map("student_id")
+  //
+  staff      Staff     @relation(fields: [staffId], references: [id])
+  student    Student   @relation(fields: [studentId], references: [id])
+
+  @@unique([staffId, studentId])
+  @@map("session")
+}
+
+model Incident {
+  id               String    @id @default(uuid())
+  foundBy          String    @unique @map("found_by")
+  belongsTo        String    @unique @map("belongs_to")
+  mattressId       String    @unique @map("mattress_id")
+  resolved         Boolean   @default(false)
+  openTime         DateTime  @default(now())
+  closeTime        DateTime?
+  //
+  mattressInvolved Mattress  @relation(fields: [mattressId], references: [id])
+  foundByStudent   Student   @relation("foundByStudent", fields: [foundBy], references: [id])
+  belongsToStudent Student   @relation("belongsToStudent", fields: [belongsTo], references: [id])
+
+  @@map("incident")
 }
