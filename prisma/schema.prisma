@@ -32,11 +32,11 @@ model Student {
   id            String      @id @default(uuid())
   rollNumber    String      @unique @db.VarChar(12)
   currentRoomId String      @unique @map("current_room_id")
-  nextRoomId    String      @unique @map("next_room_id")
+  nextRoomId    String?     @unique @map("next_room_id")
   //
   user          User        @relation(fields: [id], references: [id])
   currentRoom   Room        @relation("currentResident", fields: [currentRoomId], references: [id])
-  nextRoom      Room        @relation("nextResident", fields: [nextRoomId], references: [id])
+  nextRoom      Room?       @relation("nextResident", fields: [nextRoomId], references: [id])
   foundIncident Incident?   @relation("foundByStudent")
   lostIncident  Incident?   @relation("belongsToStudent")
   belongings    Belonging[]
@@ -77,15 +77,18 @@ model Warehouse {
 }
 
 model Belonging {
-  id          String    @id @default(uuid())
-  isCheckedIn Boolean   @default(false) @map("is_checked_in")
-  studentId   String    @map("student_id")
-  warehouseId String    @map("warehouse_id")
+  id           String     @id @default(uuid())
+  description  String?
+  isCheckedIn  Boolean    @default(false) @map("is_checked_in")
+  studentId    String     @map("student_id")
+  warehouseId  String?    @map("warehouse_id")
+  checkedInAt  DateTime   @default(now()) @map("checked_in_at")
+  checkedOutAt DateTime?  @map("checked_out_at")
   //
-  student     Student   @relation(fields: [studentId], references: [id])
-  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
-  luggage     Luggage?
-  mattress    Mattress?
+  student      Student    @relation(fields: [studentId], references: [id])
+  warehouse    Warehouse? @relation(fields: [warehouseId], references: [id])
+  luggage      Luggage?
+  mattress     Mattress?
 
   @@map("belonging")
 }
@@ -109,6 +112,7 @@ model Mattress {
 
 model Session {
   id         String    @id @default(uuid())
+  remark     String?
   openTime   DateTime  @default(now()) @map("open_time")
   closeTime  DateTime? @map("close_time")
   terminated Boolean   @default(false)
