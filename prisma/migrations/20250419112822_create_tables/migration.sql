@@ -3,6 +3,7 @@ CREATE TABLE `user` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `user_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -112,10 +113,10 @@ CREATE TABLE `incident` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `staff` ADD CONSTRAINT `staff_id_fkey` FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `staff` ADD CONSTRAINT `staff_id_fkey` FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `student` ADD CONSTRAINT `student_id_fkey` FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `student` ADD CONSTRAINT `student_id_fkey` FOREIGN KEY (`id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `student` ADD CONSTRAINT `student_current_room_id_fkey` FOREIGN KEY (`current_room_id`) REFERENCES `room`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -124,7 +125,7 @@ ALTER TABLE `student` ADD CONSTRAINT `student_current_room_id_fkey` FOREIGN KEY 
 ALTER TABLE `student` ADD CONSTRAINT `student_next_room_id_fkey` FOREIGN KEY (`next_room_id`) REFERENCES `room`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `room` ADD CONSTRAINT `room_hostel_id_fkey` FOREIGN KEY (`hostel_id`) REFERENCES `hostel`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `room` ADD CONSTRAINT `room_hostel_id_fkey` FOREIGN KEY (`hostel_id`) REFERENCES `hostel`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `belonging` ADD CONSTRAINT `belonging_student_id_fkey` FOREIGN KEY (`student_id`) REFERENCES `student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -133,10 +134,10 @@ ALTER TABLE `belonging` ADD CONSTRAINT `belonging_student_id_fkey` FOREIGN KEY (
 ALTER TABLE `belonging` ADD CONSTRAINT `belonging_warehouse_id_fkey` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `luggage` ADD CONSTRAINT `luggage_id_fkey` FOREIGN KEY (`id`) REFERENCES `belonging`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `luggage` ADD CONSTRAINT `luggage_id_fkey` FOREIGN KEY (`id`) REFERENCES `belonging`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `mattress` ADD CONSTRAINT `mattress_id_fkey` FOREIGN KEY (`id`) REFERENCES `belonging`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `mattress` ADD CONSTRAINT `mattress_id_fkey` FOREIGN KEY (`id`) REFERENCES `belonging`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `session` ADD CONSTRAINT `session_staff_id_fkey` FOREIGN KEY (`staff_id`) REFERENCES `staff`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
