@@ -108,3 +108,69 @@ export const POST: RequestHandler = async ({ request }) => {
         await prisma.$disconnect();
     }
 };
+
+export const GET: RequestHandler = async ({ url }) => {
+    const rollNumber = url.searchParams.get("rollNumber");
+
+    if (!rollNumber) {
+        throw error(400, {
+            message: "missing required query param rollNumber",
+        });
+    }
+
+    try {
+        const student = await prisma.student.findUnique({
+            where: {
+                rollNumber: rollNumber.trim(),
+            },
+            select: { id: true },
+        });
+
+        if (!student) {
+            throw error(404, {
+                message: `student with roll number ${rollNumber} not found`,
+            });
+        }
+
+        const belongings = await prisma.belonging.findMany({
+            where: {
+                studentId: student.id,
+            },
+
+            include: {
+                luggage: true,
+                mattress: true,
+            },
+            orderBy: {
+                checkedInAt: "asc",
+            },
+        });
+
+        return json(belongings);
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            console.error(
+                `error @ api/belonging GET: Meta: ${JSON.stringify(e.meta)}`,
+            );
+            throw error(500, {
+                message: `database error occurred while fetching belongings`,
+            });
+        } else if (
+            e &&
+            typeof e === "object" &&
+            "status" in e &&
+            e.status === 404
+        ) {
+            throw e;
+        }
+
+        console.error(
+            `API Error @ /api/belonging GET: ${e instanceof Error ? e.message : String(e)}`,
+            e,
+        );
+
+        throw error(500, { message: "internal server error" });
+    } finally {
+        prisma.$disconnect();
+    }
+};
