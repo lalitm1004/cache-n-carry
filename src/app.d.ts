@@ -8,6 +8,7 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+	type Device = 'mobile' | 'desktop';
 }
 
 export {};

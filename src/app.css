@@ -1,1 +1,64 @@
 @import 'tailwindcss';
+
+@theme {
+    --font-raleway: 'Raleway', sans-serif;
+    --font-philosopher: 'Philosopher', sans-serif;
+    --font-neue-machina: 'NeueMachina', sans-serif;
+    --font-quattro: 'Quattro', sans-serif;
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 100;
+    font-style: normal;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapLight.otf') format('opentype');
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 100;
+    font-style: italic;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapLightItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapRegular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 400;
+    font-style: italic;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapRegularItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 900;
+    font-style: normal;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapUltrabold.otf') format('opentype');
+}
+
+@font-face {
+    font-family: "NeueMachina";
+    font-weight: 900;
+    font-style: italic;
+    src: url('/assets/fonts/NeueMachina/PPNeueMachina-InktrapUltraboldItalic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Quattro';
+    src: url('/assets/fonts/quattro/ia-writer-quattro-latin-400-normal.woff2') format("woff2");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quattro';
+    src: url('/assets/fonts/quattro/ia-writer-quattro-latin-700-normal.woff2') format("woff2");
+    font-weight: 700;
+    font-style: normal;
+}

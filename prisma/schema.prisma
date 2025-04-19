@@ -23,7 +23,7 @@ model User {
 model Staff {
   id      String    @id @default(uuid())
   //
-  user    User      @relation(fields: [id], references: [id])
+  user    User      @relation(fields: [id], references: [id], onDelete: Cascade)
   session Session[]
 
   @@map("staff")
@@ -35,7 +35,7 @@ model Student {
   currentRoomId String      @unique @map("current_room_id")
   nextRoomId    String?     @unique @map("next_room_id")
   //
-  user          User        @relation(fields: [id], references: [id])
+  user          User        @relation(fields: [id], references: [id], onDelete: Cascade)
   currentRoom   Room        @relation("currentResident", fields: [currentRoomId], references: [id])
   nextRoom      Room?       @relation("nextResident", fields: [nextRoomId], references: [id])
   foundIncident Incident?   @relation("foundByStudent")
@@ -62,7 +62,7 @@ model Room {
   //
   currentResident Student? @relation("currentResident")
   nextResident    Student? @relation("nextResident")
-  hostel          Hostel   @relation(fields: [hostelId], references: [id])
+  hostel          Hostel   @relation(fields: [hostelId], references: [id], onDelete: Cascade)
 
   @@unique([hostelId, number])
   @@map("room")
@@ -97,7 +97,7 @@ model Belonging {
 model Luggage {
   id        String    @id @default(uuid())
   //
-  belonging Belonging @relation(fields: [id], references: [id])
+  belonging Belonging @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("luggage")
 }
@@ -105,7 +105,7 @@ model Luggage {
 model Mattress {
   id        String    @id @default(uuid())
   //
-  belonging Belonging @relation(fields: [id], references: [id])
+  belonging Belonging @relation(fields: [id], references: [id], onDelete: Cascade)
   incident  Incident?
 
   @@map("mattress")
