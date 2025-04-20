@@ -108,66 +108,66 @@ A `warehouse` is a physical storage unit for student belingings.
 
 #### `belonging`
 A `belonging` is a general entity for storable items.
-| Field            | Type          | Constraints                                    | Description                                         |
-|------------------|---------------|------------------------------------------------|-----------------------------------------------------|
-| `id`             | INTEGER       | PRIMARY KEY                                    | `UUID` identification for each belonging               |
-| `description`    | VARCHAR(191)          | NULLABLE                                       | general description of the item                   |
-| `is_checked_in`  | BOOLEAN       | DEFAULT FALSE                                  | indication of whether the item is checked in |
-| `checked_in_at`  | DATETIME      | NULLABLE                                       | timestamp for when the item was checked in        |
-| `checked_out_at` | DATETIME      | NULLABLE                                       | timestamp for when the item was checked out        |
-| `student_id`     | VARCHAR(191)       | FOREIGN KEY (`student.id`)                     | `UUID` identification for the owning student                 |
-| `warehouse_id`   | VARCHAR(191)       | FOREIGN KEY (`warehouse.id`), NULLABLE         | `UUID` identification for the storage warehouse |
+| Field            | Type         | Constraints                            | Description                                    |
+|----------------- |--------------|----------------------------------------|------------------------------------------------|
+| `id`             | INTEGER      | PRIMARY KEY                            | `UUID` identification for each belonging       |
+| `description`    | VARCHAR(191) | NULLABLE                               | general description of the item                |
+| `is_checked_in`  | BOOLEAN      | DEFAULT FALSE                          | indication of whether the item is checked in   |
+| `checked_in_at`  | DATETIME     | NULLABLE                               | timestamp for when the item was checked in     |
+| `checked_out_at` | DATETIME     | NULLABLE                               | timestamp for when the item was checked out    |
+| `student_id`     | VARCHAR(191) | FOREIGN KEY (`student.id`)             | `UUID` identification for the owning student   |
+| `warehouse_id`   | VARCHAR(191) | FOREIGN KEY (`warehouse.id`), NULLABLE | `UUID` identification for the storage warehouse|
 
 ---
 
 #### `luggage`
 Student `luggage` that can be checked in and out in direct sessions.
-| Field   | Type         | Constraints                               | Description                                          |
-|---------|--------------|-------------------------------------------|------------------------------------------------------|
-| `id`    | VARCHAR(191)      | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for each bag      |
+| Field | Type         | Constraints                               | Description                        |
+|-------|--------------|-------------------------------------------|------------------------------------|
+| `id`  | VARCHAR(191) | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for each bag |
 
 ---
 
 #### `mattress`
 A `mattress` can be stored over the semester break, and gets transported to a student's room before they arrive. An ownership discrepancy leads to an incident.
-| Field   | Type         | Constraints                               | Description                                          |
-|---------|--------------|-------------------------------------------|------------------------------------------------------|
-| `id`    | VARCHAR(191)      | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for a mattress      |
+| Field| Type         | Constraints                               | Description                          |
+|------|--------------|-------------------------------------------|--------------------------------------|
+| `id` | VARCHAR(191) | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for a mattress |
 
 ---
 
 #### `session`
 Represents a warehouse interaction involving a student and staff member.
-| Field         | Type          | Constraints                                       | Description                                            |
-|---------------|---------------|---------------------------------------------------|--------------------------------------------------------|
-| `id`          | VARCHAR(191)       | PRIMARY KEY                                       | `UUID` identification for each session                    |
-| `remark`      | VARCHAR(191)          | NULLABLE                                          | Optional notes about the session                      |
-| `open_time`   | DATETIME      |                                                   | timestamp for when the session started.                |
-| `close_time`  | DATETIME      | NULLABLE                                          | timestamp for when the session ended.                  |
-| `terminated`  | BOOLEAN       | DEFAULT FALSE                                     | indication of whether the session was manually terminated. |
-| `staff_id`    | VARCHAR(191)       | FOREIGN KEY (`staff.id`)                          | `UUID` identification for the staff member managing the session                |
-| `student_id`  | VARCHAR(191)       | FOREIGN KEY (`student.id`), UNIQUE per staff (`staff_id`, `student_id`)                   | `UUID` identification for the student who owns the belongings               |
+| Field         | Type          | Constraints                                                            | Description                                                     |
+|---------------|---------------|------------------------------------------------------------------------|-----------------------------------------------------------------|
+| `id`          | VARCHAR(191)  | PRIMARY KEY                                                            | `UUID` identification for each session                          | 
+| `remark`      | VARCHAR(191)  | NULLABLE                                                               | Optional notes about the session                                |
+| `open_time`   | DATETIME      |                                                                        | timestamp for when the session started.                         |
+| `close_time`  | DATETIME      | NULLABLE                                                               | timestamp for when the session ended.                           |
+| `terminated`  | BOOLEAN       | DEFAULT FALSE                                                          | indication of whether the session was manually terminated.      |
+| `staff_id`    | VARCHAR(191)  | FOREIGN KEY (`staff.id`)                                               | `UUID` identification for the staff member managing the session |
+| `student_id`  | VARCHAR(191)  | FOREIGN KEY (`student.id`), UNIQUE per staff (`staff_id`, `student_id`)| `UUID` identification for the student who owns the belongings   |
 
 ---
 
 #### `incident`
 Represents misplacement or ownership conflict involving mattresses.
-| Field            | Type          | Constraints                                      | Description                                        |
-|------------------|---------------|--------------------------------------------------|-----------------------------------------------     |
-| `id`             | VARCHAR(191)       | PRIMARY KEY                                      | `UUID` identification for each incident.               |
-| `mattress_id`    | VARCHAR(191)       | FOREIGN KEY (`mattress.id`)                      | `UUID` identification for the mattress involved in the incident.             |
-| `found_by`       | VARCHAR(191)       | FOREIGN KEY (`student.id`)                       | `UUID` identification for the student who discovered the misplaced mattress. |
-| `belongs_to`     | VARCHAR(191)       | FOREIGN KEY (`student.id`)                       | `UUID` identification for the student to whom the mattress actually belongs. |
-| `resolved`       | BOOLEAN       | DEFAULT FALSE                                    | indication of whether the incident has been resolved.  |
-| `open_time`      | DATETIME      |                                                  | timestamp for when the incident was reported.      |
-| `close_time`     | DATETIME      | NULLABLE                                         | timestamp for when the incident was resolved.      |
+| Field         | Type         | Constraints                 | Description                                                                  |
+|---------------|------------- |-----------------------------|------------------------------------------------------------------------------|
+| `id`          | VARCHAR(191) | PRIMARY KEY                 | `UUID` identification for each incident.                                     |
+| `mattress_id` | VARCHAR(191) | FOREIGN KEY (`mattress.id`) | `UUID` identification for the mattress involved in the incident.             |
+| `found_by`    | VARCHAR(191) | FOREIGN KEY (`student.id`)  | `UUID` identification for the student who discovered the misplaced mattress. |
+| `belongs_to`  | VARCHAR(191) | FOREIGN KEY (`student.id`)  | `UUID` identification for the student to whom the mattress actually belongs. |
+| `resolved`    | BOOLEAN      | DEFAULT FALSE               | indication of whether the incident has been resolved.                        |
+| `open_time`   | DATETIME     |                             | timestamp for when the incident was reported.                                |
+| `close_time`  | DATETIME     | NULLABLE                    | timestamp for when the incident was resolved.                                |
 
 ---
 
 ### Constraints
 
 | Table       | Foreign Key       | References      | On Delete | On Update |
-|------------ |------------------ |---------------- |---------- |---------- |
+|-------------|-------------------|-----------------|-----------|-----------|
 | `staff`     | `id`              | `user(id)`      | CASCADE   | CASCADE   |
 | `student`   | `id`              | `user(id)`      | CASCADE   | CASCADE   |
 | `student`   | `current_room_id` | `room(id)`      | RESTRICT  | CASCADE   |
@@ -183,3 +183,15 @@ Represents misplacement or ownership conflict involving mattresses.
 | `incident`  | `found_by`        | `student(id)`   | RESTRICT  | CASCADE   |
 | `incident`  | `belongs_to`      | `student(id)`   | RESTRICT  | CASCADE   |
 
+## Tech stack
+- ### **Frontend & API**: SvelteKit + TailwindCSS
+  Fullstack framework for UI + endpoints.
+
+- ### **Database**: MySQL  
+  Reliable relational storage.
+
+- ### **ORM**: Prisma  
+  Type-safe queries, schema-first workflow.
+
+- ### **Containerization**: Docker  
+  Portable, reproducible dev/prod setup.
