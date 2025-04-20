@@ -1,11 +1,11 @@
-# CacheNCarry: 
+# CacheNCarry 🧳
 #### Where "left behind" meets `LEFT JOIN`.
 ---
 
 
 CacheNCarry is an end-of-semester storage management system designed to track and manage student belongings (cloakroom luggage + a mattress). The system ensures easy check-in/check-out processes, reduces human error, and provides traceability for checked-in bags and misplaced mattresses.
 
-## Flow
+## 🌊 Flow
 
 ### 1. Student Registration:
 
@@ -45,7 +45,7 @@ If a scanned mattress does not belong to the student:
   - Who mistakenly received another student’s mattress.
 - This allows staff to resolve such incidents efficiently without manual investigation.
 
-## Schema Overview
+## 📋 Schema Overview
 ### Entities
 
 #### `user`
@@ -164,7 +164,7 @@ Represents misplacement or ownership conflict involving mattresses.
 
 ---
 
-### Constraints
+## 🖇️ Constraints
 
 | Table       | Foreign Key       | References      | On Delete | On Update |
 |-------------|-------------------|-----------------|-----------|-----------|
@@ -183,14 +183,14 @@ Represents misplacement or ownership conflict involving mattresses.
 | `incident`  | `found_by`        | `student(id)`   | RESTRICT  | CASCADE   |
 | `incident`  | `belongs_to`      | `student(id)`   | RESTRICT  | CASCADE   |
 
-## Tech stack
+## 🔧 Tech stack
 - ### **Frontend & API**: SvelteKit + TailwindCSS
   Fullstack framework for UI + endpoints.
 
 - ### **Database**: MySQL  
   Reliable relational storage.
 
-- ### **ORM**: Prisma  
+- ### **DB Connector**: Prisma  
   Type-safe queries, schema-first workflow.
 
 - ### **Containerization**: Docker  
