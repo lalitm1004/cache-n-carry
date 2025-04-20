@@ -66,6 +66,11 @@ export const POST: RequestHandler = async ({ request }) => {
                         checkedOutAt: true,
                         luggage: true,
                         mattress: true,
+                        warehouse: {
+                            select: {
+                                location: true
+                            }
+                        }
                     },
                 });
 
@@ -139,7 +144,13 @@ export const GET: RequestHandler = async ({ url }) => {
             include: {
                 luggage: true,
                 mattress: true,
+                warehouse: {
+                    select: {
+                        location: true
+                    }
+                }
             },
+
             orderBy: {
                 checkedInAt: "asc",
             },

@@ -94,7 +94,7 @@
 
 <main class={`h-dvh w-dvw overflow-hidden flex flex-col items-center gap-4 px-4 py-16`}>
     <h1 class={`font-neue-machina font-bold text-4xl w-full`}>
-        Register
+        Login
     </h1>
 
     <div class="w-[90%] flex flex-row justify-center gap-2 px-1 py-1 bg-neutral-700 rounded-lg text-lg">
@@ -171,5 +171,5 @@
 </main>
 
 <svelte:head>
-    <title>CacheNCarry | SignIn</title>
+    <title>CacheNCarry | Login</title>
 </svelte:head>

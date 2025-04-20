@@ -83,7 +83,7 @@ model Belonging {
   isCheckedIn  Boolean    @default(false) @map("is_checked_in")
   studentId    String     @map("student_id")
   warehouseId  String?    @map("warehouse_id")
-  checkedInAt  DateTime   @default(now()) @map("checked_in_at")
+  checkedInAt  DateTime?  @map("checked_in_at")
   checkedOutAt DateTime?  @map("checked_out_at")
   //
   student      Student    @relation(fields: [studentId], references: [id])

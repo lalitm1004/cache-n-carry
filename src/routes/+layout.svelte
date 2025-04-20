@@ -6,6 +6,7 @@
     import { ToastStore } from '$lib/stores/ToastStore';
     import Toast from '$lib/components/Toast.svelte';
     import MobileOnly from '$lib/components/MobileOnly.svelte';
+    import Navbar from '$lib/components/Navbar.svelte';
 
 	let { children } = $props();
 
@@ -29,7 +30,10 @@
 
 {#if $device === 'mobile'}
 	{@render children()}
+
 	<BackgroundTexture />
+
+	<Navbar />
 {:else}
 	<MobileOnly />
 {/if}

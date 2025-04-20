@@ -204,5 +204,5 @@
 </main>
 
 <svelte:head>
-    <title>CacheNCarry | SignIn</title>
+    <title>CacheNCarry | Register</title>
 </svelte:head>
