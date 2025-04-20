@@ -85,50 +85,50 @@ async function createTimeLogTriggers() {
 	const triggerQueries = [
 		`DROP TRIGGER IF EXISTS belonging_checkin_log;`,
 		`
-			CREATE TRIGGER belonging_checkin_log
+		CREATE TRIGGER belonging_checkin_log
 			BEFORE UPDATE ON belonging
 			FOR EACH ROW
-			BEGIN
-				IF OLD.is_checked_in = FALSE AND NEW.is_checked_in = TRUE THEN
-					SET NEW.checked_in_at = NOW();
-				END IF;
-			END;
+				BEGIN
+					IF OLD.is_checked_in = FALSE AND NEW.is_checked_in = TRUE THEN
+						SET NEW.checked_in_at = NOW();
+					END IF;
+				END;
 		`,
 
 		`DROP TRIGGER IF EXISTS belonging_checkout_log;`,
 		`
-			CREATE TRIGGER belonging_checkout_log
+		CREATE TRIGGER belonging_checkout_log
 			BEFORE UPDATE ON belonging
 			FOR EACH ROW
-			BEGIN
-				IF OLD.is_checked_in = TRUE AND NEW.is_checked_in = FALSE THEN
-					SET NEW.checked_out_at = NOW();
-				END IF;
-			END;
+				BEGIN
+					IF OLD.is_checked_in = TRUE AND NEW.is_checked_in = FALSE THEN
+						SET NEW.checked_out_at = NOW();
+					END IF;
+				END;
 		`,
 
 		`DROP TRIGGER IF EXISTS session_log;`,
 		`
-			CREATE TRIGGER session_log
+		CREATE TRIGGER session_log
 			BEFORE UPDATE ON session
 			FOR EACH ROW
-			BEGIN
-				IF OLD.terminated = FALSE AND NEW.terminated = TRUE THEN
-					SET NEW.close_time = NOW();
-				END IF;
-			END;
+				BEGIN
+					IF OLD.terminated = FALSE AND NEW.terminated = TRUE THEN
+						SET NEW.close_time = NOW();
+					END IF;
+				END;
 		`,
 
 		`DROP TRIGGER IF EXISTS incident_log;`,
 		`
-			CREATE TRIGGER incident_log
+		CREATE TRIGGER incident_log
 			BEFORE UPDATE ON incident
 			FOR EACH ROW
-			BEGIN
-				IF OLD.resolved = FALSE AND NEW.resolved = TRUE THEN
-					SET NEW.close_time = NOW();
-				END IF;
-			END;
+				BEGIN
+					IF OLD.resolved = FALSE AND NEW.resolved = TRUE THEN
+						SET NEW.close_time = NOW();
+					END IF;
+				END;
 		`,
 	];
 

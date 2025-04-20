@@ -19,11 +19,11 @@ CREATE TABLE `staff` (
 -- CreateTable
 CREATE TABLE `student` (
     `id` VARCHAR(191) NOT NULL,
-    `rollNumber` VARCHAR(12) NOT NULL,
+    `roll_number` VARCHAR(12) NOT NULL,
     `current_room_id` VARCHAR(191) NOT NULL,
     `next_room_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `student_rollNumber_key`(`rollNumber`),
+    UNIQUE INDEX `student_roll_number_key`(`roll_number`),
     UNIQUE INDEX `student_current_room_id_key`(`current_room_id`),
     UNIQUE INDEX `student_next_room_id_key`(`next_room_id`),
     PRIMARY KEY (`id`)
@@ -58,6 +58,7 @@ CREATE TABLE `warehouse` (
 -- CreateTable
 CREATE TABLE `belonging` (
     `id` VARCHAR(191) NOT NULL,
+    `ref_code` INTEGER NOT NULL,
     `description` VARCHAR(191) NULL,
     `is_checked_in` BOOLEAN NOT NULL DEFAULT false,
     `student_id` VARCHAR(191) NOT NULL,
@@ -65,6 +66,7 @@ CREATE TABLE `belonging` (
     `checked_in_at` DATETIME(3) NULL,
     `checked_out_at` DATETIME(3) NULL,
 
+    UNIQUE INDEX `belonging_ref_code_key`(`ref_code`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
