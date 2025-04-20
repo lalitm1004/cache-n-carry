@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 });
 
                 if (!student) {
-                    throw new Prisma.PrismClientKnownRequestError(
+                    throw new Prisma.PrismaClientKnownRequestError(
                         `student with roll number '${rollNumber}' not found`,
                         {
                             code: "P2025",
