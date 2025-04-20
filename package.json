@@ -14,7 +14,8 @@
 		"db:stop": "docker-compose -f docker/docker-compose.yml down",
 		"db:reset": "docker-compose -f docker/docker-compose.yml down -v --remove-orphans && npm run db:start",
 		"db:sync": "npm run db:reset && npm run db:wait && npx prisma db push && npx prisma db seed",
-		"db:wait": "npx wait-on tcp:localhost:3307 && docker exec cache-n-carry-mysql-dev sh -c \"until mysqladmin ping -h127.0.0.1 -uroot -prootpassword --silent 2>/dev/null; do sleep 1; done\""
+		"db:wait": "npx wait-on tcp:localhost:3307 && docker exec cache-n-carry-mysql-dev sh -c \"until mysqladmin ping -h127.0.0.1 -uroot -prootpassword --silent 2>/dev/null; do sleep 1; done\"",
+		"db:cli": "docker exec -it cache-n-carry-mysql-dev mysql -uroot -prootpassword"
 	},
 	"prisma": {
 		"seed": "npx tsx prisma/seed.ts"
@@ -26,6 +27,7 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/bcrypt": "^5.0.2",
 		"@types/node": "^22.14.1",
+		"@types/uuid": "^10.0.0",
 		"prisma": "^6.6.0",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
@@ -39,6 +41,7 @@
 		"bcrypt": "^5.1.1",
 		"mysql2": "^3.14.0",
 		"nanoid": "^5.1.5",
-		"tailwind-merge": "^3.2.0"
+		"tailwind-merge": "^3.2.0",
+		"uuid": "^11.1.0"
 	}
 }
