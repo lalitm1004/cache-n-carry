@@ -31,7 +31,7 @@ model Staff {
 
 model Student {
   id            String      @id @default(uuid())
-  rollNumber    String      @unique @db.VarChar(12)
+  rollNumber    String      @unique @map("roll_number") @db.VarChar(12)
   currentRoomId String      @unique @map("current_room_id")
   nextRoomId    String?     @unique @map("next_room_id")
   //
