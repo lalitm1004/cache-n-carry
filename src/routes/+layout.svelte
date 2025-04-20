@@ -6,6 +6,7 @@
     import Toast from '$lib/components/Toast.svelte';
     import MobileOnly from '$lib/components/MobileOnly.svelte';
     import Navbar from '$lib/components/Navbar.svelte';
+    import { page } from '$app/state';
 
 	let { children } = $props();
 
@@ -30,7 +31,9 @@
 {#if $device === 'mobile'}
 	{@render children()}
 
-	<Navbar />
+	{#if !page.url.pathname.startsWith('/auth')}
+		<Navbar />
+	{/if}
 {:else}
 	<MobileOnly />
 {/if}

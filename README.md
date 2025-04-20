@@ -6,6 +6,7 @@ Capstone project for CSD317-Introduction to Database Systems
    - Docker Desktop
    - Node V22+
    - npm
+   - dos2unix
 
 2. Clone this respository
 ```bash

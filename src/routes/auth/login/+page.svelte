@@ -70,6 +70,7 @@
                         name: data.staff.name,
                         email: data.staff.email,
                     });
+                    goto('/')
                 } else {
                     addToast({
                         message: 'Invalid credentials',
@@ -90,6 +91,8 @@
             });
         }
     }
+
+    const inputStyle = 'border-2 border-neutral-400 rounded-md px-2 py-2 bg-neutral-200';
 </script>
 
 <main class={`h-dvh w-dvw overflow-hidden flex flex-col items-center gap-4 px-4 py-16`}>
@@ -97,16 +100,16 @@
         Login
     </h1>
 
-    <div class="w-[90%] flex flex-row justify-center gap-2 px-1 py-1 bg-neutral-700 rounded-lg text-lg">
+    <div class="w-[70%] flex flex-row justify-center gap-2 px-1 py-1 bg-neutral-200 rounded-lg text-lg">
         <button
-            class={`w-1/2 px-4 py-2 rounded-lg ${pageState === 'student' ? 'bg-neutral-200 text-neutral-950' : 'bg-transparent text-white'}`}
+            class={`w-1/2 px-4 py-2 rounded-lg transition-colors duration-300 ${pageState === 'student' ? 'bg-neutral-400' : 'bg-transparent'}`}
             onclick={() => (pageState = 'student')}
         >
             Student
         </button>
 
         <button
-            class={`w-1/2 px-4 py-2 rounded-lg ${pageState === 'staff' ? 'bg-neutral-200 text-neutral-950' : 'bg-transparent text-white'}`}
+            class={`w-1/2 px-4 py-2 rounded-lg transition-colors duration-300 ${pageState === 'staff' ? 'bg-neutral-400' : 'bg-transparent'}`}
             onclick={() => (pageState = 'staff')}
         >
             Staff
@@ -122,7 +125,7 @@
                 type="email"
                 placeholder="Email"
                 bind:value={email}
-                class={`border p-2 rounded-lg bg-neutral-800`}
+                class={`${inputStyle}`}
                 required
             />
 
@@ -130,11 +133,11 @@
                 type="password"
                 placeholder="Password"
                 bind:value={password}
-                class={`border p-2 rounded-lg bg-neutral-800`}
+                class={`${inputStyle}`}
                 required
             />
 
-            <button type="submit" class={`bg-tranparent border-2 border-green-400 text-white px-4 py-2 rounded-lg active:bg-green-200/20`}>
+            <button type="submit" class={`bg-green-400 text-white px-4 py-2 rounded-lg active:bg-green-800`}>
                 Login
             </button>
         </form>
@@ -147,7 +150,7 @@
                 type="email"
                 placeholder="Email"
                 bind:value={email}
-                class={`border p-2 rounded-lg bg-neutral-800`}
+                class={`${inputStyle}`}
                 required
             />
 
@@ -155,11 +158,11 @@
                 type="password"
                 placeholder="Password"
                 bind:value={password}
-                class={`border p-2 rounded-lg bg-neutral-800`}
+                class={`${inputStyle}`}
                 required
             />
 
-            <button type="submit" class={`bg-tranparent border-2 border-green-400 text-white px-4 py-2 rounded-lg active:bg-green-200/20`}>
+            <button type="submit" class={`bg-green-400 text-white px-4 py-2 rounded-lg active:bg-green-800`}>
                 Register
             </button>
         </form>

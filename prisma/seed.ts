@@ -30,6 +30,7 @@ async function seedHostelRoomData() {
 		{ name: '3C', type: 'double' },
 		{ name: '4A', type: 'single' },
 		{ name: '4B', type: 'single' },
+		{ name: '4C', type: 'single' },
 		{ name: '5A', type: 'single' },
 		{ name: '5B', type: 'single' },
 		{ name: '5C', type: 'single' },
