@@ -3,32 +3,24 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { db } from "$lib/server/database/database";
 import { Prisma } from "@prisma/client";
 
-interface TerminateSessionRequestBody {
+interface DeleteSessionRequestBody {
     rollNumber: string;
     staffEmail: string;
 }
 
 export const POST: RequestHandler = async ({ request }) => {
-    let requestData: TerminateSessionRequestBody;
+    let requestData: DeleteSessionRequestBody;
 
     try {
-        requestData = (await request.json()) as TerminateSessionRequestBody;
-    } catch (e) {
+        requestData = (await request.json()) as DeleteSessionRequestBody;
+    } catch {
         throw error(400, { message: "invalid json body" });
     }
 
     const { rollNumber, staffEmail } = requestData;
 
-    if (!rollNumber || !staffEmail) {
-        console.log(rollNumber);
-        console.log(staffEmail);
-        throw error(400, {
-            message: "rollNumber or staffEmail not provided",
-        });
-    }
-
     try {
-        const updateResult = await db.session.updateMany({
+        const deleteResult = await db.session.deleteMany({
             where: {
                 student: {
                     rollNumber: rollNumber.trim(),
@@ -41,15 +33,12 @@ export const POST: RequestHandler = async ({ request }) => {
                 closeTime: null,
                 terminated: false,
             },
-            data: {
-                terminated: true,
-            },
         });
 
-        if (updateResult.count === 0) {
+        if (deleteResult.count === 0) {
             throw error(404, {
                 message:
-                    "no active non terminated session found for the user and staff to terminate",
+                    "no active non terminated session found for this user and staff",
             });
         }
 
@@ -65,10 +54,12 @@ export const POST: RequestHandler = async ({ request }) => {
         }
 
         console.error(
-            `API Error @ /api/session/terminate POST: ${e instanceof Error ? e.message : String(e)}`,
+            `API Error @ /api/session/end POST (delete action): ${e instanceof Error ? e.message : String(e)}`,
             e,
         );
 
-        throw error(500, { message: "internal server error" });
+        throw error(500, {
+            message: "internal server error",
+        });
     }
 };

@@ -86,9 +86,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
                 const studentId = belonging.studentId;
 
-                if (belonging.isCheckedIn) {
+                if (!belonging.isCheckedIn) {
                     const alreadyCheckInError = new Error(
-                        "belonging with ID is already checked in",
+                        "belonging with ID is not checked in",
                     );
                     alreadyCheckInError.name = "ConflictError";
                     throw alreadyCheckInError;
@@ -115,7 +115,7 @@ export const POST: RequestHandler = async ({ request }) => {
                 const checkedInBelonging = await tx.belonging.update({
                     where: { id: belongingId },
                     data: {
-                        isCheckedIn: true,
+                        isCheckedIn: false,
                         warehouseId,
                     },
                     select: {
