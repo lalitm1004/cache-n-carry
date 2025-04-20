@@ -10,7 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"db:start": "docker-compose -f docker/docker-compose.yml up -d",
+		"db:start": "dos2unix docker/* && docker-compose -f docker/docker-compose.yml up -d",
 		"db:stop": "docker-compose -f docker/docker-compose.yml down",
 		"db:reset": "docker-compose -f docker/docker-compose.yml down -v --remove-orphans && npm run db:start",
 		"db:sync": "npm run db:reset && npm run db:wait && npx prisma db push && npx prisma db seed",

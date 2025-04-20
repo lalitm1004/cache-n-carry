@@ -1,5 +1,4 @@
 <script lang="ts">
-	import BackgroundTexture from '$lib/components/BackgroundTexture.svelte';
     import { device, setDevice } from '$lib/stores/DeviceStore';
     import { onMount } from 'svelte';
 	import '../app.css';
@@ -30,8 +29,6 @@
 
 {#if $device === 'mobile'}
 	{@render children()}
-
-	<BackgroundTexture />
 
 	<Navbar />
 {:else}

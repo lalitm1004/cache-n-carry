@@ -21,7 +21,7 @@
     </button>
 </nav>
 
-{#if isOpen || 1}
+{#if isOpen}
     <ScreenBlur />
 
     <div class={`z-50 fixed top-14 right-2 bg-neutral-600/40 backdrop-blur-sm flex flex-col px-2 py-2 rounded-lg border-2 border-neutral-800`}>

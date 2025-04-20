@@ -5,6 +5,18 @@
     --font-philosopher: 'Philosopher', sans-serif;
     --font-neue-machina: 'NeueMachina', sans-serif;
     --font-quattro: 'Quattro', sans-serif;
+    --font-bespoke: 'BespokeStencil', sans-serif;
+    --font-supreme: 'Supreme', sans-serif;
+
+    --font-weight-thin: 100;
+    --font-weight-extralight : 200;
+    --font-weight-light : 300;
+    --font-weight-regular : 400;
+    --font-weight-medium : 500;
+    --font-weight-semibold : 600;
+    --font-weight-bold : 700;
+    --font-weight-extrabold : 800;
+    --font-weight-black : 900;
 }
 
 @font-face {
@@ -60,5 +72,23 @@
     font-family: 'Quattro';
     src: url('/assets/fonts/quattro/ia-writer-quattro-latin-700-normal.woff2') format("woff2");
     font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "BespokeStencil";
+    src: url('/assets/fonts/BespokeStencil/BespokeStencil-Bold.woff2') format('woff2'),
+        url('/assets/fonts/BespokeStencil/BespokeStencil-Bold.woff') format('woff'),
+        url('/assets/fonts/BespokeStencil/BespokeStencil-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Supreme";
+    src: url('/assets/fonts/Supreme/Supreme-Regular.woff2') format('woff2'),
+        url('/assets/fonts/Supreme/Supreme-Regular.woff') format('woff'),
+        url('/assets/fonts/Supreme/Supreme-Regular.ttf') format('truetype');
+    font-weight: 400;
     font-style: normal;
 }

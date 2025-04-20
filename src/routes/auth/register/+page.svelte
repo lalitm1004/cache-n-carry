@@ -85,11 +85,11 @@
 </script>
 
 <main class={`h-dvh w-dvw overflow-hidden flex flex-col items-center gap-4 px-4 py-16`}>
-    <h1 class={`font-neue-machina font-bold text-4xl w-full`}>
+    <h1 class={`font-bespoke text-5xl w-full`}>
         Register
     </h1>
 
-    <div class="w-[90%] flex flex-row justify-center gap-2 px-1 py-1 bg-neutral-700 rounded-lg text-lg">
+    <div class="w-[70%] flex flex-row justify-center gap-2 px-1 py-1 bg-neutral-200 rounded-lg text-lg">
         <button
             class={`w-1/2 px-4 py-2 rounded-lg ${pageState === 'student' ? 'bg-neutral-200 text-neutral-950' : 'bg-transparent text-white'}`}
             onclick={() => (pageState = 'student')}
