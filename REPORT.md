@@ -2,32 +2,28 @@
 #### Where "left behind" meets `LEFT JOIN`.
 ---
 
-
 CacheNCarry is an end-of-semester storage management system designed to track and manage student belongings (cloakroom luggage + a mattress). The system ensures easy check-in/check-out processes, reduces human error, and provides traceability for checked-in bags and misplaced mattresses.
 
+---
+
 ## 🌊 Flow
-
 ### 1. Student Registration:
-
 At the end of each semester, a `student` registers their `belonging(s)`:
 - Belongings can be of two types: `luggage` or `mattress`.
 - Each item is assigned a unique `UUID`.
 - A QR code is generated for each item and must be printed and physically attached to the respective belonging by the student.
 
 ### 2. Item Check-In:
-
 At the warehouse:
 - A `staff` member scans a QR code on the student's phone to begin a `session`, associating the session with that student, and logging check-in time.
 - The QR codes on each belonging are scanned to link them to the student and register them into the system.
 - The staff ends the session once all items have been scanned.
 
 ### 3. Storage Period:
-
 - Belongings remain in the warehouse during the student's absence.
 - Mattresses are handled separately: at the start of the semester, they are moved directly to student rooms by university workers.
 
 ### 4. Item Retrieval (Check-Out):
-
 Upon the student's return:
 - The student visits the warehouse.
 - Staff scan the student’s QR code to open a check-out session.
@@ -37,7 +33,6 @@ Upon the student's return:
 - The staff ends the session once all items have been scanned.
 
 ### 5. Misplacement Handling:
-
 If a scanned mattress does not belong to the student:
 - An `incident` is opened.
 - Because all mattresses are uniquely tagged and linked to their rightful owners, it can be easily determined:
@@ -45,26 +40,23 @@ If a scanned mattress does not belong to the student:
   - Who mistakenly received another student’s mattress.
 - This allows staff to resolve such incidents efficiently without manual investigation.
 
+---
+
 ## 🔧 Tech stack
 - ### **Frontend & API**: SvelteKit + TailwindCSS
-  Fullstack framework for UI + endpoints.
-
 - ### **Database**: MySQL  
-  Reliable relational storage.
-
 - ### **DB Connector**: Prisma  
-  Type-safe queries, schema-first workflow.
-
 - ### **Containerization**: Docker  
-  Portable, reproducible dev/prod setup.
   
+---
 
 ## 🖍️ Entity Relationship Diagram
 ![ERD](https://media.discordapp.net/attachments/1139202127672115233/1363548062001139912/image.png?ex=68066e97&is=68051d17&hm=8b24def2d6880a2d8fe3426d92f58c42202330bb8dfd2fb6d2e1e90d5ee51193&=&format=webp&quality=lossless&width=1355&height=800)
 
+---
+
 ## 📋 Schema Overview
 ### Entities
-
 #### `user`
 All students and staff register as `users`.
 | Field      | Type         | Constraints | Description                    |
@@ -74,15 +66,11 @@ All students and staff register as `users`.
 | `email`    | VARCHAR(191) | UNIQUE      | unique organization email id   |
 | `password` | VARCHAR(191) | UNIQUE      | hashed password                |
 
----
-
 #### `staff`
 A `staff` member oversees sessions and incidents.
 | Field | Type         | Constraints                          | Description                                            |
 |-------|--------------|--------------------------------------|--------------------------------------------------------|
 | `id`  | VARCHAR(191) | PRIMARY KEY, FOREIGN KEY (`user.id`) | `UUID` identification for staff corressponding to user |
-
----
 
 #### `student`
 A `student` can register their items and check them in with QR codes attached to them.
@@ -93,16 +81,12 @@ A `student` can register their items and check them in with QR codes attached to
 | `current_room_id` | VARCHAR(191) | FOREIGN KEY (`room.id`)                      | `UUID` identification of current occupancy               |
 | `next_room_id`    | VARCHAR(191) | FOREIGN KEY (`room.id`), NULLABLE            | `UUID` identification of next occupancy                  |
 
----
-
 #### `hostel`
 A `hostel` is a place of residence containing rooms.
 | Field  | Type         | Constraints | Description                      |
 |------- |--------------|------------ |----------------------------------|
 | `id`   | VARCHAR(191) | PRIMARY KEY | `UUID` identification for hostel |
 | `name` | VARCHAR(191) | PRIMARY KEY | name of the hostel               |
-
----
 
 #### `room`
 Represents a `room` within a hostel.
@@ -112,16 +96,12 @@ Represents a `room` within a hostel.
 | `number`    | VARCHAR(6)   | UNIQUE per hostel (`hostel_id`, `number`) | hostel room number                                  |
 | `hostel_id` | VARCHAR(191) | FOREIGN KEY (`hostel.id`)                 | `UUID` identification for the corressponding hostel |
 
----
-
 #### `warehouse`
 A `warehouse` is a physical storage unit for student belingings.
 | Field      | Type         | Constraints | Description                           |
 |------------|--------------|-------------|-------------------------------------- |
 | `id`       | VARCHAR(191) | PRIMARY KEY | `UUID` identification for a warehouse |
 | `location` | VARCHAR(191) |             | information about general location    |
-
----
 
 #### `belonging`
 A `belonging` is a general entity for storable items.
@@ -135,23 +115,17 @@ A `belonging` is a general entity for storable items.
 | `student_id`     | VARCHAR(191) | FOREIGN KEY (`student.id`)             | `UUID` identification for the owning student   |
 | `warehouse_id`   | VARCHAR(191) | FOREIGN KEY (`warehouse.id`), NULLABLE | `UUID` identification for the storage warehouse|
 
----
-
 #### `luggage`
 Student `luggage` that can be checked in and out in direct sessions.
 | Field | Type         | Constraints                               | Description                        |
 |-------|--------------|-------------------------------------------|------------------------------------|
 | `id`  | VARCHAR(191) | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for each bag |
 
----
-
 #### `mattress`
 A `mattress` can be stored over the semester break, and gets transported to a student's room before they arrive. An ownership discrepancy leads to an incident.
 | Field| Type         | Constraints                               | Description                          |
 |------|--------------|-------------------------------------------|--------------------------------------|
 | `id` | VARCHAR(191) | PRIMARY KEY, FOREIGN KEY (`belonging.id`) | `UUID` identification for a mattress |
-
----
 
 #### `session`
 Represents a warehouse interaction involving a student and staff member.
@@ -164,8 +138,6 @@ Represents a warehouse interaction involving a student and staff member.
 | `terminated`  | BOOLEAN       | DEFAULT FALSE                                                          | indication of whether the session was manually terminated.      |
 | `staff_id`    | VARCHAR(191)  | FOREIGN KEY (`staff.id`)                                               | `UUID` identification for the staff member managing the session |
 | `student_id`  | VARCHAR(191)  | FOREIGN KEY (`student.id`), UNIQUE per staff (`staff_id`, `student_id`)| `UUID` identification for the student who owns the belongings   |
-
----
 
 #### `incident`
 Represents misplacement or ownership conflict involving mattresses.
@@ -199,6 +171,8 @@ Represents misplacement or ownership conflict involving mattresses.
 | `incident`  | `mattress_id`     | `mattress(id)`  | RESTRICT  | CASCADE   |
 | `incident`  | `found_by`        | `student(id)`   | RESTRICT  | CASCADE   |
 | `incident`  | `belongs_to`      | `student(id)`   | RESTRICT  | CASCADE   |
+
+---
 
 ## 🎯 Database Normalization
 
@@ -367,8 +341,9 @@ CREATE TABLE `incident` (
 - **2NF**: All fields relate to `PRIMARY KEY`
 - **3NF**: `mattress`/`student` references are ID-only
 
-## 🔫 Trigger Deep Dive
+---
 
+## 🔫 Trigger Deep Dive
 ### `belonging_checkin_log`
 ```sql
 CREATE TRIGGER belonging_checkin_log
