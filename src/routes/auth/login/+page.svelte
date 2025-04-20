@@ -7,36 +7,37 @@
 
     let pageState: PageState = $state('student');
 
-    // user + staff
-    let name = $state('')
     let email = $state('');
     let password = $state('');
 
-    // student specific
-    let rollNumber = $state('');
-    let hostelName = $state('');
-    let roomNumber = $state('');
-
     const handleStudentSubmit = async () => {
         try {
-            const response = await fetch('/api/student', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password, rollNumber, hostelName, roomNumber })
+            const params = new URLSearchParams({ email, password });
+            const response = await fetch(`/api/student?${params.toString()}`, {
+                method: 'GET',
             });
 
             if (response.ok) {
             	const data = await response.json();
-                setUser({
-                    type: 'student',
-                    id: data.id,
-                    name: data.name,
-                    email: data.email,
-                    rollNumber: data.rollNumber,
-                    currentRoomId: data.currentRoomId,
-                    nextRoomId: null,
-                });
-                goto('/')
+
+                if (data.success) {
+                    setUser({
+                        type: 'student',
+                        id: data.student.id,
+                        name: data.student.name,
+                        email: data.student.email,
+                        rollNumber: data.student.rollNumber,
+                        currentRoomId: data.student.currentRoomId,
+                        nextRoomId: data.student.nextRoomId,
+                    });
+
+                    goto('/')
+                } else {
+                    addToast({
+                        message: 'Invalid credentials',
+                        type: 'warning'
+                    });
+                }
             } else {
                 const error = await response.json();
                 addToast({
@@ -54,20 +55,27 @@
 
     const handleStaffSubmit = async () => {
         try {
-            const response = await fetch('/api/staff', {
-                method: 'POST',
-                headers: { 'Content-Type': 'json' },
-                body: JSON.stringify({ name, email, password })
+            const params = new URLSearchParams({ email, password })
+            const response = await fetch(`/api/staff?${params.toString()}`, {
+                method: 'GET',
             });
 
             if (response.ok) {
                 const data = await response.json();
-                setUser({
-                    type: 'staff',
-                    id: data.id,
-                    name: data.name,
-                    email: data.email,
-                });
+
+                if (data.success) {
+                    setUser({
+                        type: 'staff',
+                        id: data.staff.id,
+                        name: data.staff.name,
+                        email: data.staff.email,
+                    });
+                } else {
+                    addToast({
+                        message: 'Invalid credentials',
+                        type: 'warning'
+                    });
+                }
             } else {
                 const error = await response.json();
                 addToast({
@@ -111,14 +119,6 @@
             onsubmit={handleStudentSubmit}
         >
             <input
-                type="text"
-                placeholder="Name"
-                bind:value={name}
-                class={`border p-2 font-quattro rounded-lg bg-neutral-800`}
-                required
-            />
-
-            <input
                 type="email"
                 placeholder="Email"
                 bind:value={email}
@@ -134,32 +134,8 @@
                 required
             />
 
-            <input
-                type="text"
-                placeholder="Roll Number"
-                bind:value={rollNumber}
-                class={`border p-2 rounded-lg bg-neutral-800`}
-                required
-            />
-
-            <input
-                type="text"
-                placeholder="Hostel Name"
-                bind:value={hostelName}
-                class={`border p-2 rounded-lg bg-neutral-800`}
-                required
-            />
-
-            <input
-                type="text"
-                placeholder="Room Number"
-                bind:value={roomNumber}
-                class={`border p-2 rounded-lg bg-neutral-800`}
-                required
-            />
-
             <button type="submit" class={`bg-tranparent border-2 border-green-400 text-white px-4 py-2 rounded-lg active:bg-green-200/20`}>
-                Register
+                Login
             </button>
         </form>
     {:else}
@@ -167,14 +143,6 @@
             class={`flex flex-col gap-2 w-[90%]`}
             onsubmit={handleStaffSubmit}
         >
-            <input
-                type="text"
-                placeholder="Name"
-                bind:value={name}
-                class={`border p-2 font-quattro rounded-lg bg-neutral-800`}
-                required
-            />
-
             <input
                 type="email"
                 placeholder="Email"
@@ -198,8 +166,7 @@
     {/if}
 
     <div class={`w-full flex flex-col justify-center items-center`}>
-        <hr />
-        <a href="/auth/login" class={`underline`}>Goto Login</a>
+        <a href="/auth/register" class={`underline`}>Goto Register</a>
     </div>
 </main>
 
