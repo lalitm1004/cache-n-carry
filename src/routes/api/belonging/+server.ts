@@ -2,7 +2,6 @@ import { json, error } from "@sveltejs/kit";
 import type { RequestHandler } from "../student/$types";
 import { PrismaClient, Prisma } from "@prisma/client";
 import type { Prisma as PrismaType } from "@prisma/client";
-import { create } from "domain";
 
 type BelongingType = "luggage" | "mattress";
 
