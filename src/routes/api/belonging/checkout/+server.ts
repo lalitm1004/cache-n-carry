@@ -4,17 +4,17 @@ import { db } from "$lib/server/database/database";
 import { Prisma } from "@prisma/client";
 import type { Prisma as PrismaType } from "@prisma/client";
 
-interface CheckInRequestBody {
+interface CheckOutRequestBody {
     belongingId: string;
     warehouseName: string;
     staffEmail: string;
 }
 
 export const POST: RequestHandler = async ({ request }) => {
-    let requestData: CheckInRequestBody;
+    let requestData: CheckOutRequestBody;
 
     try {
-        requestData = (await request.json()) as CheckInRequestBody;
+        requestData = (await request.json()) as CheckOutRequestBody;
     } catch (e) {
         throw error(400, { message: "invalid json body" });
     }
