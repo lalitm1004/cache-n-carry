@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import mysql from 'mysql2/promise';
 
 const prisma = new PrismaClient();
 
@@ -10,27 +11,27 @@ async function seedHostelRoomData() {
 		{ id: 4, isDoubleSharing: false, roomsPerFloor: 45 },
 		{ id: 5, isDoubleSharing: false, roomsPerFloor: 45 },
 	];
-	
+
 	const blockNames = ["A", "B", "C"];
 	const highestFloor = 5;
-	
+
 	for (const cluster of hostelClusters) {
 		for (const blockName of blockNames) {
 			const hostelName = `${cluster.id}${blockName}`;
-			
+
 			console.log(`\nCreating hostel ${hostelName}`);
-			
+
 			const hostel = await prisma.hostel.create({
 				data: { name: hostelName }
 			});
-			
+
 			for (let floor = 0; floor <= highestFloor; floor++) {
 				const roomsToCreate: { hostelId: string, number: string }[] = [];
-				
+
 				for (let roomNum = 1; roomNum <= cluster.roomsPerFloor; roomNum++) {
 					const formattedRoomNum = roomNum.toString().padStart(2, '0');
 					const baseRoomNumber = `${floor}${formattedRoomNum}`;
-					
+
 					if (cluster.isDoubleSharing) {
 						roomsToCreate.push({ hostelId: hostel.id, number: `${baseRoomNumber}A` });
 						roomsToCreate.push({ hostelId: hostel.id, number: `${baseRoomNumber}B` });
@@ -38,7 +39,7 @@ async function seedHostelRoomData() {
 						roomsToCreate.push({ hostelId: hostel.id, number: baseRoomNumber });
 					}
 				}
-				
+
 				await prisma.room.createMany({ data: roomsToCreate });
 				console.log(`Created ${roomsToCreate.length} rooms on floor ${floor} of hostel ${hostelName}`);
 			}
@@ -65,6 +66,65 @@ async function seedWarehouseData() {
 	await prisma.warehouse.createMany({ data: warehouseData });
 }
 
+async function createTimeLogTriggers() {
+	const connection = await mysql.createConnection({
+		host: 'localhost',
+		port: 3307,
+		user: 'dev_user',
+		password: 'dev_password',
+		database: 'dev_db',
+	});
+
+	const triggerQueries = [
+		`DROP TRIGGER IF EXISTS belonging_log;`,
+		`
+			CREATE TRIGGER belonging_log
+				BEFORE UPDATE ON belonging
+				FOR EACH ROW
+				BEGIN
+					IF OLD.is_checked_in = TRUE AND NEW.is_checked_in = FALSE THEN
+						SET NEW.checked_out_at = NOW();
+					END IF;
+				END;
+		`,
+
+		`DROP TRIGGER IF EXISTS session_log;`,
+		`
+			CREATE TRIGGER session_log
+				BEFORE UPDATE ON session
+					FOR EACH ROW
+					BEGIN
+						IF OLD.terminated = FALSE AND NEW.terminated = TRUE THEN
+							SET NEW.close_time = NOW();
+						END IF;
+					END;
+		`,
+
+		`DROP TRIGGER IF EXISTS incident_log;`,
+		`
+			CREATE TRIGGER incident_log
+				BEFORE UPDATE ON incident
+					FOR EACH ROW	
+					BEGIN	
+						IF OLD.resolved = FALSE AND NEW.resolved = TRUE THEN
+							SET NEW.close_time = NOW();
+						END IF;
+					END;
+		`,
+	]
+
+	try {
+		for (const query of triggerQueries) {
+			console.log("executing query...");
+			await connection.query(query);
+		}
+	} catch (error) {
+		console.error("error executing queries.", error);
+	} finally {
+		await connection.end();
+	}
+}
+
 async function main() {
 	await seedHostelRoomData()
 		.then(() => console.log('✅ seeded Hostel and Room table'))
@@ -72,6 +132,10 @@ async function main() {
 
 	await seedWarehouseData()
 		.then(() => console.log('✅ seeded Warehouse table'))
+		.catch((e) => console.error(`🚨 ${e}`));
+
+	await createTimeLogTriggers()
+		.then(() => console.log('✅ created triggers'))
 		.catch((e) => console.error(`🚨 ${e}`));
 
 }
