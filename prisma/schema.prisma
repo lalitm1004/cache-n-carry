@@ -79,6 +79,7 @@ model Warehouse {
 
 model Belonging {
   id           String     @id @default(uuid())
+  refCode      Int        @unique @map("ref_code")
   description  String?
   isCheckedIn  Boolean    @default(false) @map("is_checked_in")
   studentId    String     @map("student_id")
