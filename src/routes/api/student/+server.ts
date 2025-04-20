@@ -161,3 +161,67 @@ export const POST: RequestHandler = async ({ request }) => {
 		await prisma.$disconnect();
 	}
 };
+
+export const GET: RequestHandler = async ({ url }) => {
+    const email = url.searchParams.get("email");
+    const password = url.searchParams.get("password");
+
+    if (!email || !password) {
+        throw error(400, { message: "Missing required query parameters: email and password" });
+    }
+
+    try {
+        // Find the student user by email
+        const student = await prisma.student.findFirst({
+            where: {
+                user: {
+                    email: email.toLowerCase().trim(),
+                },
+            },
+            select: {
+                id: true,
+                rollNumber: true,
+                currentRoomId: true,
+                nextRoomId: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        password: true, // Needed for password validation
+                    },
+                },
+            },
+        });
+
+        if (!student || !student.user) {
+            return json({ success: false, message: "Invalid email or password" });
+        }
+
+        // Compare the provided password with the stored hashed password
+        const isPasswordValid = await bcrypt.compare(password, student.user.password);
+
+        if (!isPasswordValid) {
+            return json({ success: false, message: "Invalid email or password" });
+        }
+
+        // Remove the password field before sending the response
+        const { password: _, ...userWithoutPassword } = student.user;
+
+        return json({
+            success: true,
+            student: {
+                id: student.id,
+                rollNumber: student.rollNumber,
+                currentRoomId: student.currentRoomId,
+                nextRoomId: student.nextRoomId,
+                user: userWithoutPassword,
+            },
+        });
+    } catch (e) {
+        console.error(`Error during student login validation: ${e instanceof Error ? e.message : String(e)}`);
+        throw error(500, { message: "Internal server error" });
+    } finally {
+        await prisma.$disconnect();
+    }
+};
