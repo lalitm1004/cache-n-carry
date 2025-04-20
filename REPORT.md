@@ -320,7 +320,7 @@ CREATE TABLE `session` (
 - **2NF**: All attributes depend on `PRIMARY KEY`
 - **3NF**: `staff`/`student` references are ID-only
 
-### incident
+### `incident`
 ```sql
 CREATE TABLE `incident` (
     `id` VARCHAR(191) NOT NULL,
