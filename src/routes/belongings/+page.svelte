@@ -51,6 +51,11 @@
 
                 <div>
                     <p>
+                        <span class={`font-bold`}>Code:</span>
+                        {item.id}
+                    </p>
+
+                    <p>
                         <span class={`font-bold`}>Status:</span>
                         {#if item.isCheckedIn}
                             Checked In

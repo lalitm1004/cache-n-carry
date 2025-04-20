@@ -7,12 +7,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
     const user = JSON.parse(cookies.get(USER_TOKEN_NAME)!);
     
     if (user.type === 'student') {
-        return redirect(303, '/');
+        return {};
     }
 
     const sessions = await db.session.findMany({
         where: {
-            id: user.id
+            staffId: user.id
         },
         select: {
             id: true,
@@ -34,6 +34,9 @@ export const load: PageServerLoad = async ({ cookies }) => {
             }
         },
     })
+
+    console.log(user.id)
+    console.log(sessions);
     
     return {
         sessions

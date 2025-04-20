@@ -46,6 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
                 const createdBelonging = await tx.belonging.create({
                     data: {
+                        id: Math.floor(Math.random() * 1000000).toString(),
                         description: description?.trim() || null,
                         student: {
                             connect: { id: student.id },
