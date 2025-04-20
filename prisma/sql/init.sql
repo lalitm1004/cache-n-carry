@@ -103,8 +103,8 @@ CREATE TABLE `incident` (
     `belongs_to` VARCHAR(191) NOT NULL,
     `mattress_id` VARCHAR(191) NOT NULL,
     `resolved` BOOLEAN NOT NULL DEFAULT false,
-    `openTime` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `closeTime` DATETIME(3) NULL,
+    `open_time` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `close_time` DATETIME(3) NULL,
 
     UNIQUE INDEX `incident_found_by_key`(`found_by`),
     UNIQUE INDEX `incident_belongs_to_key`(`belongs_to`),
@@ -153,3 +153,45 @@ ALTER TABLE `incident` ADD CONSTRAINT `incident_found_by_fkey` FOREIGN KEY (`fou
 
 -- AddForeignKey
 ALTER TABLE `incident` ADD CONSTRAINT `incident_belongs_to_fkey` FOREIGN KEY (`belongs_to`) REFERENCES `student`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- CreateTrigger
+DROP TRIGGER IF EXISTS belonging_log;
+DELIMITER //
+CREATE TRIGGER belonging_log
+    BEFORE UPDATE ON belonging
+    FOR EACH ROW
+BEGIN
+    IF OLD.is_checked_in = TRUE AND NEW.is_checked_in = FALSE THEN
+        SET NEW.checked_out_at = NOW();
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- CreateTrigger
+DROP TRIGGER IF EXISTS session_log;
+DELIMITER //
+CREATE TRIGGER session_log
+    BEFORE UPDATE ON session
+    FOR EACH ROW
+BEGIN
+    IF OLD.terminated = FALSE AND NEW.terminated = TRUE THEN
+        SET NEW.close_time = NOW();
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- CreateTrigger
+DROP TRIGGER IF EXISTS incident_log;
+DELIMITER //
+CREATE TRIGGER incident_log
+    BEFORE UPDATE ON incident
+    FOR EACH ROW
+BEGIN
+    IF OLD.resolved = FALSE AND NEW.resolved = TRUE THEN
+        SET NEW.close_time = NOW();
+    END IF;
+END;
+//
+DELIMITER ;

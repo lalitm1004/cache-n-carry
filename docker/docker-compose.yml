@@ -12,6 +12,9 @@ services:
       MYSQL_PASSWORD: dev_password
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+      - ./init.sh:/init.sh
+    entrypoint: [ "/bin/bash", "/init.sh", "mysqld" ]
 
 volumes:
   mysql-data:

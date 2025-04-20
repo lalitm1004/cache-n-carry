@@ -133,8 +133,8 @@ model Incident {
   belongsTo        String    @unique @map("belongs_to")
   mattressId       String    @unique @map("mattress_id")
   resolved         Boolean   @default(false)
-  openTime         DateTime  @default(now())
-  closeTime        DateTime?
+  openTime         DateTime  @default(now()) @map("open_time")
+  closeTime        DateTime? @map("close_time")
   //
   mattressInvolved Mattress  @relation(fields: [mattressId], references: [id])
   foundByStudent   Student   @relation("foundByStudent", fields: [foundBy], references: [id])
