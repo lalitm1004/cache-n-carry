@@ -407,3 +407,203 @@ CREATE TRIGGER incident_log
 - WHEN: `resolved` changes false → true
 - WHAT: Sets `close_time` to current timestamp
 - WHY: Logging incident close time
+
+---
+
+## ❓ Query Examples
+
+### Finds the staff ID associated with the provided staff email address.
+```sql
+SELECT s.id
+FROM user u
+JOIN staff s ON u.id = s.id
+WHERE LOWER(TRIM(u.email)) = ${trimmedStaffEmail}
+LIMIT 1
+```
+### Finds the warehouse ID based on the provided warehouse name.
+```sql
+SELECT id
+FROM warehouse
+WHERE location = ${trimmedWarehouseName}
+LIMIT 1
+```
+### Retrieves the student ID, check-in status, and current warehouse ID for a specific belonging ID.
+```sql
+SELECT id, student_id, is_checked_in, warehouse_id
+FROM belonging
+WHERE id = ${belongingId}
+LIMIT 1
+```
+### Checks if an active, non-terminated session exists between the specified staff and student IDs.
+```sql
+SELECT id
+FROM session
+WHERE staff_id = ${staffId}
+  AND student_id = ${studentId}
+  AND close_time IS NULL
+  AND `terminated` = false 
+LIMIT 1
+```
+### Updates a specific belonging to mark it as checked-in and assign it to the specified warehouse.
+```sql
+UPDATE belonging
+SET is_checked_in = true,
+    warehouse_id = ${warehouseId}
+WHERE id = ${belongingId}
+```
+### Selects the complete, updated record details for the specified belonging ID after the update.
+```sql
+SELECT
+    id,
+    description,
+    is_checked_in,
+    student_id,
+    warehouse_id,
+    checked_in_at,
+    checked_out_at
+FROM belonging
+WHERE id = ${belongingId}
+LIMIT 1
+```
+### Retrieves belonging details, owner ID, check-in status, and checks if it's a mattress by joining with the mattress table.
+```sql
+SELECT
+    b.id,
+    b.student_id,
+    b.is_checked_in,
+    b.checked_out_at,
+    m.id as mattress_id
+FROM belonging b
+LEFT JOIN mattress m ON b.id = m.id
+WHERE b.id = ${belongingId}
+LIMIT 1
+```
+### Finds an active, non-terminated session associated with the specific staff member and retrieves the session ID and the student ID involved.
+```sql
+SELECT id, student_id
+FROM session
+WHERE staff_id = ${staffId}
+  AND close_time IS NULL
+  AND `terminated` = false
+LIMIT 1
+```
+### Checks for any existing unresolved incidents associated with the specific mattress ID.
+```sql
+SELECT id FROM incident
+WHERE mattress_id = ${mattressId} AND resolved = false
+LIMIT 1
+```
+### Creates a new incident record if a mattress is checked out by someone other than its owner.
+```sql
+INSERT INTO incident (id, found_by, belongs_to, mattress_id)
+VALUES (${newIncidentId}, ${sessionStudentId}, ${actualOwnerStudentId}, ${mattressId})
+```
+### Updates the specified belonging to mark it as checked out, set the checkout time, and clear the warehouse ID.
+```sql
+UPDATE belonging
+SET is_checked_in = false,
+    checked_out_at = NOW(),
+    warehouse_id = NULL
+WHERE id = ${belongingId}
+```
+### Selects the updated state (ID, check-in status, checkout time, owner ID) of the belonging after the update.
+```sql
+ SELECT id, is_checked_in, checked_out_at, student_id
+ FROM belonging
+ WHERE id = ${belongingId}
+ LIMIT 1
+```
+### Closes the active session by setting the close time and adding a remark indicating the belonging checkout.
+```sql
+UPDATE session
+SET close_time = NOW(),
+    remark = ${remark}
+WHERE id = ${closedSessionId}
+```
+### Finds the Student ID based on the provided roll number.
+```sql
+SELECT id FROM student WHERE roll_number = ${trimmedRollNumber} LIMIT 1
+```
+### Inserts a new belonging record with its ID, description, and associated student ID.
+```sql
+INSERT INTO belonging (id, description, student_id)
+VALUES (${newBelongingId}, ${trimmedDescription}, ${studentId})
+```
+### Inserts a corresponding record into the luggage table using the belonging ID.
+```sql
+INSERT INTO luggage (id) VALUES (${newBelongingId})
+```
+### Inserts a corresponding record into the mattress table using the belonging ID.
+```sql
+INSERT INTO mattress (id) VALUES (${newBelongingId})
+```
+### Selects the complete details of the newly created belonging, including related luggage/mattress/warehouse info.
+```sql
+SELECT
+    b.id, b.description, b.is_checked_in, b.student_id, b.warehouse_id,
+    b.checked_in_at, b.checked_out_at,
+    l.id as luggage_id,
+    m.id as mattress_id,
+    w.location as warehouse_location
+FROM belonging b
+LEFT JOIN luggage l ON b.id = l.id
+LEFT JOIN mattress m ON b.id = m.id
+LEFT JOIN warehouse w ON b.warehouse_id = w.id
+WHERE b.id = ${newBelongingId}
+LIMIT 1
+```
+### Fetches all belongings for a given student ID, joining related luggage, mattress, and warehouse data.
+```sql
+SELECT
+    b.id, b.description, b.is_checked_in, b.student_id, b.warehouse_id,
+    b.checked_in_at, b.checked_out_at,
+    l.id as luggage_id,
+    m.id as mattress_id,
+    w.location as warehouse_location
+FROM belonging b
+LEFT JOIN luggage l ON b.id = l.id
+LEFT JOIN mattress m ON b.id = m.id
+LEFT JOIN warehouse w ON b.warehouse_id = w.id
+WHERE b.student_id = ${studentId}
+ORDER BY b.checked_in_at ASC
+```
+### Finds the User ID associated with the provided staff email address.
+```sql
+SELECT id FROM user WHERE email = ${trimmedStaffEmail} LIMIT 1
+```
+### Verifies that the User ID found corresponds to an actual staff member.
+```sql
+SELECT id FROM staff WHERE id = ${userId} LIMIT 1
+```
+### Inserts a new session record linking the provided staff and student IDs.
+```sql
+INSERT INTO session (id, staff_id, student_id)
+VALUES (${newSessionId}, ${staffId}, ${studentId})
+```
+### Selects the complete details of the newly created session record.
+```sql
+SELECT id, remark, open_time, close_time, `terminated`, staff_id, student_id
+FROM session
+WHERE id = ${newSessionId}
+LIMIT 1
+```
+### Deletes any active, non-terminated sessions matching the specific student (by roll number) and staff (by email).
+```sql
+DELETE FROM session
+WHERE
+    close_time IS NULL
+    AND `terminated` = false
+    AND student_id = (
+        SELECT id
+        FROM student
+        WHERE roll_number = ${trimmedRollNumber}
+        LIMIT 1
+    )
+    AND staff_id = (
+        SELECT s.id
+        FROM user u
+        JOIN staff s ON u.id = s.id
+        WHERE u.email = ${trimmedStaffEmail}
+        LIMIT 1
+    )
+```
