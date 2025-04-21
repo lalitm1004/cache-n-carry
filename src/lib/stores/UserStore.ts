@@ -17,7 +17,7 @@ export interface IStaff extends IUser {
     type: 'staff';
 };
 
-export const TOKEN_NAME = 'cachencarry-user'
+export const TOKEN_NAME = 'cachencarry-user-prod'
 const {
     store: UserStore, set: setUser
 } = createPersistentStore<IStudent | IStaff | null>(TOKEN_NAME);

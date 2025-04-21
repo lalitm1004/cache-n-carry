@@ -116,7 +116,7 @@ export const POST: RequestHandler = async ({ request }) => {
             const studentId = studentResult[0].id;
 
             // 2. Generate ID for the new belonging
-            const newBelongingId = crypto.randomUUID();
+            const newBelongingId = Math.floor(Math.random() * 1000000).toString(); 
 
             // 3. Insert into belonging table
             // Note: is_checked_in defaults to false in schema, warehouse_id defaults null
