@@ -58,7 +58,6 @@ CREATE TABLE `warehouse` (
 -- CreateTable
 CREATE TABLE `belonging` (
     `id` VARCHAR(191) NOT NULL,
-    `ref_code` INTEGER NOT NULL,
     `description` VARCHAR(191) NULL,
     `is_checked_in` BOOLEAN NOT NULL DEFAULT false,
     `student_id` VARCHAR(191) NOT NULL,
