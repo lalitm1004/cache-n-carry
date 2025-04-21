@@ -46,7 +46,7 @@
 <main class={`h-screen w-screen grid place-items-center`}>
     {#if $UserStore?.type === 'student'}
         <div class={`flex flex-col justify-center items-center`}>
-            <p class={`font-bold text-5xl`}>
+            <p class={`font-bold text-3xl`}>
                 {$UserStore.rollNumber}
             </p>
             <p class={`text-center`}>Have a staff member enter your RollNumber to begin a session!</p>
@@ -65,7 +65,7 @@
                         <p>{session.student.user.name}</p>
                         <p>{session.student.user.email}</p>
                         <p>{session.student.rollNumber}</p>
-                        
+
                         <button onclick={() => endSession(session.id, session.student.rollNumber)} class={`bg-red-600 rounded-md text-white w-fit px-4 py-2`}>End Session</button>
                     </a>
                 {/each}
