@@ -30,6 +30,16 @@
         invalidateAll();
     }
 
+    const endSession = async (sessionId: string, rollNumber:string) => {
+        const response = await fetch('/api/session/end', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ staffEmail: $UserStore!.email, rollNumber }),
+        })
+
+        invalidateAll();
+    }
+
     const inputStyle = 'border-2 border-neutral-400 rounded-md px-2 py-2 bg-neutral-200';
 </script>
 
@@ -50,11 +60,13 @@
             </div>
             <ul class={`flex flex-col w-full`}>
                 {#each sessions! as session (session.id)}
-                    <a class={`flex flex-col border-2 px-2 rounded-lg`} href={`/session/${session.id}`}>
+                    <a class={`relative flex flex-col border-2 px-2 rounded-lg justify-center items-center p-2`} href={`/session/${session.id}`}>
                         <p class={`font-bold text-2xl`}>Session</p>
                         <p>{session.student.user.name}</p>
                         <p>{session.student.user.email}</p>
                         <p>{session.student.rollNumber}</p>
+                        
+                        <button onclick={() => endSession(session.id, session.student.rollNumber)} class={`bg-red-600 rounded-md text-white w-fit px-4 py-2`}>End Session</button>
                     </a>
                 {/each}
             </ul>
